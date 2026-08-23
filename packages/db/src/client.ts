@@ -24,7 +24,15 @@ const connectionConfig = {
   allowExitOnIdle: !isProduction,
   keepAlive: true,
   keepAliveInitialDelayMillis: 10_000,
-  ssl: isDevelopment ? false : { rejectUnauthorized: false },
+  // Self-hosted note: Supabase's bundled Postgres runs with ssl=off, so forcing
+  // TLS in production makes every connection fail. DATABASE_SSL_DISABLED=true
+  // opts out; hosted deployments keep the previous behaviour.
+  ssl:
+    process.env.DATABASE_SSL_DISABLED === "true"
+      ? false
+      : isDevelopment
+        ? false
+        : { rejectUnauthorized: false },
 };
 
 const drizzleLogger = DEBUG_PERF ? createDrizzleLogger() : undefined;
