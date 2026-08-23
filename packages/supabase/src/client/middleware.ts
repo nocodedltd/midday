@@ -34,8 +34,13 @@ export async function updateSession(
   // published JWKS and refreshes expired tokens. Never trust
   // getSession() inside server code — it isn't guaranteed to
   // revalidate the Auth token.
-  const { data, error } = await supabase.auth.getClaims();
-  const isAuthenticated = !!data && !error;
+  // Self-hosted note: getClaims() verifies the JWT against the project's
+  // published JWKS. Self-hosted Supabase signs symmetrically (HS256) and
+  // serves an empty JWKS, so getClaims() can never succeed and every request
+  // is treated as unauthenticated. getUser() revalidates against the auth
+  // server instead, which works for both symmetric and asymmetric signing.
+  const { data, error } = await supabase.auth.getUser();
+  const isAuthenticated = !!data?.user && !error;
 
   return {
     response,
