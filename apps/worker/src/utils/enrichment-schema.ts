@@ -68,7 +68,7 @@ export const enrichmentSchema = z.object({
     .enum(transactionCategories)
     .nullable()
     .describe(
-      "The category of the transaction - only return if confidence is high",
+      "Best-fit category for the transaction - always provide one",
     ),
   categoryConfidence: z
     .number()
@@ -102,8 +102,11 @@ export type UpdateData = {
 
 // Confidence thresholds for accepting LLM results
 export const CONFIDENCE_THRESHOLDS = {
-  CATEGORY_MIN: 0.7, // Only accept category if confidence >= 70%
-  MERCHANT_MIN: 0.6, // Only accept merchant if confidence >= 60%
+  // An AI-first ledger should offer a best guess and let the user correct it,
+  // rather than silently leaving spend unclassified. Confidence is still stored,
+  // so weak guesses remain reviewable. Tune with ENRICHMENT_CATEGORY_MIN.
+  CATEGORY_MIN: Number(process.env.ENRICHMENT_CATEGORY_MIN ?? 0.3),
+  MERCHANT_MIN: Number(process.env.ENRICHMENT_MERCHANT_MIN ?? 0.4),
   HIGH_CONFIDENCE: 0.9, // Consider this high confidence
 } as const;
 
