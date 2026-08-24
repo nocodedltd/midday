@@ -1,4 +1,5 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
 import {
   getTransactionsForEnrichment,
   markTransactionsAsEnriched,
@@ -23,6 +24,23 @@ const BATCH_SIZE = 50;
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
 });
+
+// Self-hosted note: enrichment normally calls Google directly, which needs a
+// Google AI key. Setting ENRICHMENT_MODEL alongside OPENAI_BASE_URL routes it
+// through any OpenAI-compatible gateway instead (OpenRouter serves the same
+// Gemini models as "google/gemini-2.5-flash-lite"). Unset, nothing changes.
+const gateway = process.env.ENRICHMENT_MODEL
+  ? createOpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+      ...(process.env.OPENAI_BASE_URL
+        ? { baseURL: process.env.OPENAI_BASE_URL }
+        : {}),
+    })
+  : null;
+
+const enrichmentModel = gateway
+  ? gateway(process.env.ENRICHMENT_MODEL!)
+  : google("gemini-2.5-flash-lite");
 
 /**
  * Enriches transactions with AI (merchant names, categories)
@@ -74,7 +92,7 @@ export class EnrichTransactionProcessor extends BaseProcessor<EnrichTransactions
 
         try {
           const { object } = await generateObject({
-            model: google("gemini-2.5-flash-lite"),
+            model: enrichmentModel,
             prompt,
             output: "array",
             schema: enrichmentSchema,
