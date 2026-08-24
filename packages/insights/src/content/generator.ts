@@ -34,9 +34,18 @@ import {
   computeSlots,
 } from "./prompts/index";
 
+// Self-hosted note: OPENAI_BASE_URL lets a self-hosted instance route through an
+// OpenAI-compatible gateway such as OpenRouter. Left unset, this is unchanged.
+// Those gateways namespace models ("openai/gpt-4.1-mini"), so OPENAI_MODEL
+// overrides the default to match whichever endpoint is in use.
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+  ...(process.env.OPENAI_BASE_URL
+    ? { baseURL: process.env.OPENAI_BASE_URL }
+    : {}),
 });
+
+const DEFAULT_MODEL = process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
 
 export type ContentGeneratorOptions = {
   model?: string;
@@ -104,7 +113,7 @@ export class ContentGenerator {
 
   constructor(options: ContentGeneratorOptions = {}) {
     // gpt-4.1-mini: best instruction following + cost efficiency for text generation
-    this.model = options.model ?? "gpt-4.1-mini";
+    this.model = options.model ?? DEFAULT_MODEL;
   }
 
   /**
