@@ -2,6 +2,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import type { createLoggerWithContext } from "@midday/logger";
 import { generateText } from "ai";
 import { removeProtocolFromDomain } from "../utils";
+import { gatewayModel } from "./ai-gateway";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
@@ -50,7 +51,7 @@ If you cannot find the official website, respond with "unknown".
 Domain:`;
 
     const result = await generateText({
-      model: google("gemini-3-flash-preview"),
+      model: gatewayModel() ?? google("gemini-3-flash-preview"),
       tools: {
         google_search: google.tools.googleSearch({}),
       } as any,
