@@ -111,13 +111,17 @@ COMMON CATEGORIES (only use if confident):
 • security: Security systems, monitoring services
 • credit-card-payment: Credit card transactions
 • interest-expense: Loan interest payments
-• uncategorized: Use when uncertain
+• uncategorized: Absolute last resort only - see rules below
 
 RULES:
-1. Only categorize if confidence >= 0.7
-2. When uncertain, return null for category
-3. Focus on merchant name for clues
-4. Consider business context and amount
+1. ALWAYS assign your best-fit category. Never return null.
+2. Express uncertainty through categoryConfidence, not by refusing to answer.
+   A considered guess at 0.45 is far more useful than "uncategorized".
+3. Only use "uncategorized" when the description carries no usable signal at
+   all (a bare reference number, a person-to-person transfer with no context).
+4. Focus on merchant name for clues; use well-known merchants confidently.
+5. Consider business context, amount and direction. Money in from a client is
+   income; a recurring small charge to a known SaaS vendor is software.
 `
     : ""
 }
