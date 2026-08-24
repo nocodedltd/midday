@@ -12,6 +12,7 @@ import { createFieldSpecificPrompt } from "../prompts/field-specific";
 import type { DocumentFormat } from "../utils/format-detection";
 import { extractTextFromPdf } from "../utils/pdf-text-extract";
 import { retryCall } from "../utils/retry";
+import { gatewayModel } from "../utils/ai-gateway";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
@@ -95,10 +96,12 @@ export abstract class BaseExtractionEngine<T extends z.ZodSchema> {
             image: documentUrl,
           };
 
+    // Self-hosted: a configured gateway serves both providers' roles.
     const model =
-      modelConfig.provider === "mistral"
+      gatewayModel() ??
+      (modelConfig.provider === "mistral"
         ? mistral(modelConfig.model)
-        : google(modelConfig.model);
+        : google(modelConfig.model));
 
     // Provider-specific options
     const providerOptions =
