@@ -6,6 +6,7 @@ import { generateText } from "ai";
 import { parseOfficeAsync } from "officeparser";
 import { cleanText, extractTextFromRtf } from "../utils";
 import { retryCall } from "../utils/retry";
+import { gatewayModel } from "../utils/ai-gateway";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
@@ -37,7 +38,7 @@ export async function loadDocument({
         const result = await retryCall(
           () =>
             generateText({
-              model: google("gemini-3-flash-preview"),
+              model: gatewayModel() ?? google("gemini-3-flash-preview"),
               abortSignal: AbortSignal.timeout(60000), // 60s timeout for PDF extraction
               messages: [
                 {
