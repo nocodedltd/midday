@@ -160,12 +160,34 @@ async function fetchTellerInstitutions(): Promise<InstitutionRecord[]> {
  * Each provider resolves its own env vars internally.
  * Returns both the fetched institutions and any errors that occurred.
  */
+async function fetchStarlingInstitutions(): Promise<InstitutionRecord[]> {
+  // Starling is a single bank we talk to directly rather than a directory to
+  // query, so there is nothing to fetch - we simply advertise it. Listed with
+  // high popularity so it surfaces first for GB, where the aggregators that
+  // used to cover the UK are no longer available to new self-hosted instances.
+  return [
+    {
+      id: "starling",
+      name: "Starling Bank",
+      logo: getLogoURL("starling"),
+      sourceLogo: "https://cdn.brandfetch.io/starlingbank.com/w/400/h/400",
+      provider: "starling" as const,
+      countries: ["GB"],
+      availableHistory: null,
+      maximumConsentValidity: null,
+      popularity: 100,
+      type: null,
+    },
+  ];
+}
+
 export async function fetchAllInstitutions(): Promise<FetchInstitutionsResult> {
   const results = await Promise.allSettled([
     fetchEnableBankingInstitutions(),
     fetchGoCardLessInstitutions(),
     fetchPlaidInstitutions(),
     fetchTellerInstitutions(),
+    fetchStarlingInstitutions(),
   ]);
 
   const institutions: InstitutionRecord[] = [];
@@ -176,6 +198,7 @@ export async function fetchAllInstitutions(): Promise<FetchInstitutionsResult> {
     "gocardless",
     "plaid",
     "teller",
+    "starling",
   ];
 
   for (let i = 0; i < results.length; i++) {
