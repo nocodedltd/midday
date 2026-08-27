@@ -64,6 +64,10 @@ export type UpdateBankAccountParams = {
   currency?: string;
   baseBalance?: number;
   baseCurrency?: string;
+  // Written by the bank sync so a failing account can be retried and, past the
+  // retry limit, skipped.
+  errorDetails?: string | null;
+  errorRetries?: number | null;
 };
 
 export async function updateBankAccount(
