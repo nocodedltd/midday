@@ -1,6 +1,7 @@
 import { createLoggerWithContext } from "@midday/logger";
 import type { Queue } from "bullmq";
 import { accountingQueue } from "../queues/accounting";
+import { bankingQueue } from "../queues/banking";
 import { documentsQueue } from "../queues/documents";
 import { inboxProviderQueue, inboxQueue } from "../queues/inbox";
 import { insightsQueue } from "../queues/insights";
@@ -31,6 +32,8 @@ function getQueueByName(queueName: string): Queue {
       return ratesQueue;
     case "accounting":
       return accountingQueue;
+    case "banking":
+      return bankingQueue;
     case "invoices":
       return invoicesQueue;
     case "insights":
