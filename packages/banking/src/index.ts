@@ -1,6 +1,7 @@
 import { EnableBankingProvider } from "./providers/enablebanking/enablebanking-provider";
 import { GoCardLessProvider } from "./providers/gocardless/gocardless-provider";
 import { PlaidProvider } from "./providers/plaid/plaid-provider";
+import { StarlingProvider } from "./providers/starling/starling-provider";
 import { TellerProvider } from "./providers/teller/teller-provider";
 import type {
   DeleteAccountsRequest,
@@ -22,7 +23,8 @@ export class Provider {
     | PlaidProvider
     | TellerProvider
     | GoCardLessProvider
-    | EnableBankingProvider;
+    | EnableBankingProvider
+    | StarlingProvider;
 
   constructor(params: ProviderParams) {
     this.#name = params.provider;
@@ -36,6 +38,9 @@ export class Provider {
         break;
       case "plaid":
         this.#provider = new PlaidProvider();
+        break;
+      case "starling":
+        this.#provider = new StarlingProvider();
         break;
       case "enablebanking":
         this.#provider = new EnableBankingProvider();
