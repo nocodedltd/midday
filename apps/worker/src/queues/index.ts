@@ -2,6 +2,8 @@ import type { Queue } from "bullmq";
 import type { QueueConfig } from "../types/queue-config";
 import { accountingQueue } from "./accounting";
 import { accountingQueueConfig } from "./accounting.config";
+import { bankingQueue } from "./banking";
+import { bankingQueueConfig } from "./banking.config";
 import { customersQueue } from "./customers";
 import { customersQueueConfig } from "./customers.config";
 import { documentsQueue } from "./documents";
@@ -35,6 +37,7 @@ export const queueConfigs: QueueConfig[] = [
   ratesQueueConfig,
   institutionsQueueConfig,
   accountingQueueConfig,
+  bankingQueueConfig,
   invoicesQueueConfig,
   customersQueueConfig,
   teamsQueueConfig,
@@ -55,6 +58,7 @@ export function getAllQueues(): Queue[] {
     ratesQueue,
     institutionsQueue,
     accountingQueue,
+    bankingQueue,
     invoicesQueue,
     customersQueue,
     teamsQueue,
