@@ -26,6 +26,15 @@ const BATCH_SIZE = 500;
 
 type MethodValue = "other" | "card_purchase" | "transfer";
 
+/**
+ * Providers only distinguish credit from everything else. Upstream collapses
+ * the five-value account type before calling them, so match that rather than
+ * passing the raw type through.
+ */
+function getClassification(type: string | null | undefined) {
+  return type === "credit" ? ("credit" as const) : ("depository" as const);
+}
+
 function mapMethod(method: string | null | undefined): MethodValue {
   switch (method) {
     case "card":
@@ -128,7 +137,7 @@ export class SyncBankAccountsProcessor extends BaseProcessor<SyncBankAccountsPay
         >[0]["provider"],
       });
       const accessToken = connection.accessToken!;
-      const accountType = account.type ?? "depository";
+      const accountType = getClassification(account.type);
 
       // --- balance -------------------------------------------------------
       try {
@@ -143,6 +152,8 @@ export class SyncBankAccountsProcessor extends BaseProcessor<SyncBankAccountsPay
             id: account.id,
             teamId,
             balance: balance.amount,
+            availableBalance: balance.available_balance ?? null,
+            creditLimit: balance.credit_limit ?? null,
             errorDetails: null,
             errorRetries: null,
           });
