@@ -282,10 +282,12 @@ export function BankSearchContent({
               emptyState
             ) : (
               <div className="flex flex-col items-center justify-center min-h-[350px]">
-                <p className="font-medium mb-2">No banks found</p>
+                <p className="font-medium mb-2">No bank provider connected</p>
                 <p className="text-sm text-center text-[#878787]">
-                  We couldn't find a bank matching your criteria.
-                  <br /> Let us know, or start with manual import.
+                  This instance has no open banking provider configured, so no
+                  banks can be listed or connected.
+                  <br />
+                  Import transactions instead, or add provider credentials.
                 </p>
 
                 <div className="mt-4 flex space-x-2">
