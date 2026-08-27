@@ -68,6 +68,8 @@ export type UpdateBankAccountParams = {
   // retry limit, skipped.
   errorDetails?: string | null;
   errorRetries?: number | null;
+  availableBalance?: number | null;
+  creditLimit?: number | null;
 };
 
 export async function updateBankAccount(
